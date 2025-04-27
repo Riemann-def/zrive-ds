@@ -11,7 +11,7 @@ from config import VARIABLES, COLORS, UNITS
 
 logger = logging.getLogger("meteo-logger")
 
-def plot_weather_data(data: DataFrameType, output_dir: str = "./plots/") -> None:
+def plot_weather_data(data: DataFrameType, output_dir: str = "./src/module_1/plots/") -> None:
     """
     Create comprehensive visualizations for the weather data.
 

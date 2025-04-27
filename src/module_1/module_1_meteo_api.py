@@ -213,7 +213,7 @@ def main() -> None:
         
         # Resample the data (MS: month start frequency, QS: quarter start frequency)
         logger.info("Processing data")
-        processed_data = process_data(all_data, resample_freq="MS")
+        processed_data = process_data(all_data, resample_freq="QS")
 
         # Save DataFrame to csv
         processed_data.to_csv(processed_data_path)
