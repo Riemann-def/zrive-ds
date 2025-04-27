@@ -1,5 +1,3 @@
-
-
 # Constants
 API_URL = "https://archive-api.open-meteo.com/v1/archive?"
 
@@ -12,10 +10,10 @@ COORDINATES = {
 VARIABLES = ["temperature_2m_mean", "precipitation_sum", "wind_speed_10m_max"]
 
 UNITS = {
-    'time': 'iso8601', 
-    'temperature_2m_mean': '°C', 
-    'precipitation_sum': 'mm', 
-    'wind_speed_10m_max': 'km/h'
+    "time": "iso8601",
+    "temperature_2m_mean": "°C",
+    "precipitation_sum": "mm",
+    "wind_speed_10m_max": "km/h",
 }
 
 COLORS = {"Madrid": "red", "London": "blue", "Rio": "green"}
