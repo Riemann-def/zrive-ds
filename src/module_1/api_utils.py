@@ -1,4 +1,4 @@
-from typing import Dict, List, Any, Optional, Union, Tuple
+from typing import List, Optional
 import logging
 import requests
 from requests.exceptions import RequestException
@@ -82,7 +82,10 @@ def validate_meteo_api_response(data: JSONType, expected_variables: List[str]) -
         daily_data = data.get("daily", {})
         if not all(var in daily_data for var in expected_variables):
             logger.error(
-                f"API response missing expected variables. Found: {list(daily_data.keys())}"
+                f"""
+                API response missing expected variables.
+                Found: {list(daily_data.keys())}
+                """
             )
             return False
 

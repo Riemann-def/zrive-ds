@@ -5,10 +5,9 @@ precipitation, and wind speed trends.
 """
 
 import pandas as pd
-import numpy as np
-from typing import Dict, List, Any, Optional, Union, Tuple
+from typing import List, Optional
 import logging
-from models import JSONType, DataFrameType
+from models import DataFrameType
 from api_utils import api_call, validate_meteo_api_response
 from plotting import plot_weather_data
 from config import COORDINATES, VARIABLES, API_URL

@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import seaborn as sns
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Optional
+from typing import List
 import logging
 import os
-from models import JSONType, DataFrameType
+from models import DataFrameType
 from config import VARIABLES, COLORS, UNITS
 
 logger = logging.getLogger("meteo-logger")
@@ -256,7 +255,11 @@ def plot_correlation_analysis(
                             )
 
                     plt.title(
-                        f"{city}: {var1.replace('_', ' ').title()} vs {var2.replace('_', ' ').title()}"
+                        f"""
+                        {city}: {var1.replace('_', ' ').title()}
+                        vs
+                        {var2.replace('_', ' ').title()}
+                        """
                     )
                     plt.xlabel(
                         f"{var1.replace('_', ' ').title()} ({UNITS.get(var1, '')})"
