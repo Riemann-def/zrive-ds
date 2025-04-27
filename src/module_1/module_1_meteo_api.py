@@ -175,49 +175,36 @@ def process_data(
 def main() -> None:
     """
     Main function to load processed data and visualize weather data.
-    Skips the API fetch and processing steps if the processed data file exists.
     """
+
     logger.info("Starting weather data analysis")
-
-    # Check if processed data file exists
-    processed_data_path = "processed_data_frame.csv"
-
-    try:
-        # Load existing processed data
-        logger.info(f"Loading processed data from {processed_data_path}")
-        processed_data = pd.read_csv(processed_data_path)
-        
-        # Convert 'time' column back to datetime
-        processed_data['time'] = pd.to_datetime(processed_data['time'])
-        
-        logger.info(f"Successfully loaded processed data with shape {processed_data.shape}")
-
-    except FileNotFoundError:
     
-        # Fetch data for each city
-        all_data = []
-        for city in COORDINATES:
-            logger.info(f"Fetching data for {city}")
-            city_data = get_data_meteo_api(city)
+    # Fetch data for each city
+    all_data = []
+    for city in COORDINATES:
+        logger.info(f"Fetching data for {city}")
+        city_data = get_data_meteo_api(city)
 
-            logger.info(city_data.columns)
-            
-            if city_data is not None:
-                all_data.append(city_data)
-            else:
-                logger.warning(f"Skipping {city} due to data fetch failure")
+        logger.info(city_data.columns)
         
-        if not all_data:
-            logger.error("No data available for any city. Exiting.")
-            return
-        
-        # Resample the data (MS: month start frequency, QS: quarter start frequency)
-        logger.info("Processing data")
-        processed_data = process_data(all_data, resample_freq="QS")
+        if city_data is not None:
+            all_data.append(city_data)
+        else:
+            logger.warning(f"Skipping {city} due to data fetch failure")
+    
+    if not all_data:
+        logger.error("No data available for any city. Exiting.")
+        return
+    
+    # Resample the data (MS: month start frequency, QS: quarter start frequency)
+    logger.info("Processing data")
+    processed_data = process_data(all_data, resample_freq="QS")
 
-        # Save DataFrame to csv
-        processed_data.to_csv(processed_data_path)
-
+    # Save DataFrame to csv
+    try:
+        processed_data.to_csv("processed_data_frame.csv")
+    except Exception as e:
+        logger.warning(f"Failed saving processed DataFrame to csv. Error: {e}")
         
     # Create visualizations
     logger.info("Creating visualizations")
