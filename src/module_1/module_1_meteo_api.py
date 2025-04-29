@@ -7,10 +7,10 @@ precipitation, and wind speed trends.
 import pandas as pd
 from typing import List, Optional
 import logging
-from models import DataFrameType
-from api_utils import api_call, validate_meteo_api_response
-from plotting import plot_weather_data
-from config import COORDINATES, VARIABLES, API_URL
+from src.module_1.models import DataFrameType, FrequencyType
+from src.module_1.api_utils import api_call, validate_meteo_api_response
+from src.module_1.plotting import plot_weather_data
+from src.module_1.config import COORDINATES, VARIABLES, API_URL
 
 # Configure logging (alternative to "print()" function)
 logging.basicConfig(
@@ -24,7 +24,7 @@ def get_data_meteo_api(
     city: str,
     start_date: str = "2010-01-01",
     end_date: str = "2020-12-31",
-    variables: List[str] = None,
+    variables: List[str] | None = None,
 ) -> Optional[DataFrameType]:
     """
     Fetch weather data for a specific city from the Open-Meteo API.
@@ -87,7 +87,7 @@ def get_data_meteo_api(
 
 
 def process_data(
-    data_frames: List[DataFrameType], resample_freq: str = "MS"
+    data_frames: List[DataFrameType], resample_freq: FrequencyType = "MS"
 ) -> DataFrameType:
     """
     Process and combine weather data from multiple cities with enhanced analytics.
@@ -95,7 +95,8 @@ def process_data(
 
     Args:
         data_frames: List of DataFrames containing weather data for different cities
-        resample_freq: Frequency string for resampling (e.g., 'MS' for month start)
+        resample_freq: Frequency for resampling, must be one of the valid
+                        pandas frequencies (e.g., 'MS' for month start)
 
     Returns:
         Combined and processed DataFrame with enhanced metrics
@@ -208,8 +209,6 @@ def main() -> None:
         logger.info(f"Fetching data for {city}")
         city_data = get_data_meteo_api(city)
 
-        logger.info(city_data.columns)
-
         if city_data is not None:
             all_data.append(city_data)
         else:
@@ -226,6 +225,9 @@ def main() -> None:
     # Save DataFrame to csv
     try:
         processed_data.to_csv("processed_data_frame.csv")
+        # Check if the DataFrame has columns (safe access to potential None)
+        if processed_data is not None and hasattr(processed_data, "columns"):
+            logger.info(f"DataFrame columns: {processed_data.columns}")
     except Exception as e:
         logger.warning(f"Failed saving processed DataFrame to csv. Error: {e}")
 
