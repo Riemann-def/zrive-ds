@@ -1,16 +1,16 @@
-from typing import List, Optional
+from typing import List
 import logging
 import requests
 from requests.exceptions import RequestException
 import time
-from models import JSONType
+from .models import JSONType
 
 logger = logging.getLogger("meteo-logger")
 
 
 def api_call(
     url: str, params: JSONType, max_retries: int = 3, backoff_factor: float = 1.0
-) -> Optional[JSONType]:
+) -> JSONType | None:
     """
     Makes a generic API call with retry logic and error handling.
 
@@ -33,7 +33,7 @@ def api_call(
             # Check if the request was successful
             response.raise_for_status()
 
-            return response.json()
+            return dict(response.json())
 
         except RequestException as e:
             retry_count += 1

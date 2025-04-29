@@ -1,12 +1,12 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import seaborn as sns
+import seaborn as sns  # type: ignore
 import numpy as np
 from typing import List
 import logging
 import os
-from models import DataFrameType
-from config import VARIABLES, COLORS, UNITS
+from .models import DataFrameType
+from .config import VARIABLES, COLORS, UNITS
 
 logger = logging.getLogger("meteo-logger")
 
@@ -29,7 +29,8 @@ def plot_weather_data(
     os.makedirs(output_dir, exist_ok=True)
 
     # Get unique cities
-    cities = data["city"].unique()
+    cities_array = data["city"].unique()
+    cities = cities_array.tolist()  # Convert numpy array to list
 
     # 1. Create individual time series plots for each variable
     plot_time_series(data, cities, output_dir + "variables/")
@@ -78,10 +79,12 @@ def plot_time_series(data: DataFrameType, cities: List[str], output_dir: str) ->
             if len(city_data) > 1:  # Need at least 2 points for a line
                 # Convert dates to ordinal for linear regression
                 x = np.array([d.toordinal() for d in city_data["time"]])
-                y = city_data[variable].values
+                y = np.array(city_data[variable].values, dtype=float)
 
                 # Calculate trend line using polyfit
-                z = np.polyfit(x, y, 1)
+                x_np = np.asarray(x, dtype=np.float64)
+                y_np = np.asarray(y, dtype=np.float64)
+                z = np.polyfit(x_np, y_np, 1)
                 p = np.poly1d(z)
 
                 # Plot trend line (dashed)
@@ -169,8 +172,10 @@ def plot_seasonal_analysis(
             sns.boxplot(
                 x="season",
                 y=variable,
+                hue="season",
                 data=city_data,
                 palette=["lightblue", "lightgreen", "coral", "khaki"],
+                legend=False,
             )
 
             plt.title(f"{city}: Seasonal Distribution")
@@ -237,22 +242,25 @@ def plot_correlation_analysis(
                     )
 
                     # Add trend line
-                    x = city_data[var1].values
-                    y = city_data[var2].values
+                    x = city_data[var1].values.astype(float)
+                    y = city_data[var2].values.astype(float)
 
                     # Calculate and plot trend line if we have enough data
-                    if (
-                        len(x) > 1
-                        and not np.all(np.isnan(x))
-                        and not np.all(np.isnan(y))
-                    ):
+                    if len(x) > 1 and not np.isnan(x).all() and not np.isnan(y).all():
+                        # Filter out NaN values
                         mask = ~np.isnan(x) & ~np.isnan(y)
+
                         if np.sum(mask) > 1:  # At least 2 valid points
-                            z = np.polyfit(x[mask], y[mask], 1)
+                            x_valid = x[mask]
+                            y_valid = y[mask]
+
+                            z = np.polyfit(x_valid, y_valid, 1)
                             p = np.poly1d(z)
-                            plt.plot(
-                                np.sort(x[mask]), p(np.sort(x[mask])), "r--", alpha=0.7
-                            )
+
+                            x_sorted = np.sort(x_valid)
+                            y_trend = p(x_sorted)
+
+                            plt.plot(x_sorted, y_trend, "r--", alpha=0.7)
 
                     plt.title(
                         f"""
@@ -315,8 +323,10 @@ def plot_distribution_analysis(
         sns.boxplot(
             x="city",
             y=variable,
+            hue="city",
             data=data,
             palette=[COLORS.get(city, "gray") for city in cities],
+            legend=False,
         )
 
         plt.title(f"Distribution of {variable.replace('_', ' ').title()} by City")
