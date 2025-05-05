@@ -607,30 +607,3 @@ plt.show()
 :::
 :::
 
-::: {#a8348e6b .cell .markdown}
-# 5. Resumen de Hallazgos {#5-resumen-de-hallazgos}
-:::
-
-::: {#2b0e7a38 .cell .markdown}
-## Hallazgos Principales:
-
-1.  Discrepancia de Items: Hay 640 items (30.2%) en órdenes que no
-    tienen información en inventory
-2.  Comportamiento de Compra:
-    -   Los clientes compran en promedio 12.3 items por pedido
-    -   Hay un pico significativo de órdenes el 21 de enero de 2022 (199
-        órdenes)
-    -   Los martes son el día más popular para realizar pedidos
-3.  Estructura de Precios:
-    -   El precio promedio es de £4.49
-    -   Las categorías más comunes son productos de limpieza
-    -   Los descuentos promedian 6.4%
-4.  Datos Demográficos:
-    -   93.5% de usuarios no tienen datos demográficos completos
-    -   La mayoría de usuarios pertenecen al segmento \"Top Up\"
-    -   La distribución regional está balanceada
-5.  Patrones de Comportamiento:
-    -   Los productos de higiene personal y limpieza son los más
-        marcados como regulares
-    -   La tasa de abandono varía significativamente por categoría
-:::
