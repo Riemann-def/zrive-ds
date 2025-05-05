@@ -241,7 +241,7 @@ print(orders_df['num_items'].describe())
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/8445c795c793c4427ef11aed2e775ebef8ccac7a.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/8445c795c793c4427ef11aed2e775ebef8ccac7a.png)
 :::
 
 ::: {.output .stream .stdout}
@@ -300,7 +300,7 @@ plt.show()
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/6007243cb771e12682f9457ea9118b9754c2a4ab.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/6007243cb771e12682f9457ea9118b9754c2a4ab.png)
 :::
 
 ::: {.output .stream .stdout}
@@ -309,7 +309,7 @@ plt.show()
 :::
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/085a33a093e4a7f6cd8455ab1a2155b236656f0b.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/085a33a093e4a7f6cd8455ab1a2155b236656f0b.png)
 :::
 :::
 
@@ -359,7 +359,7 @@ plt.show()
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/265872adb9c8cdbf07263d746aaf932379409f1c.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/265872adb9c8cdbf07263d746aaf932379409f1c.png)
 :::
 :::
 
@@ -397,7 +397,7 @@ for col, pct in missing_pct.items():
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/811434097a1782cbb0d5aa6b37a806b36ed4f3f0.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/811434097a1782cbb0d5aa6b37a806b36ed4f3f0.png)
 :::
 
 ::: {.output .stream .stdout}
@@ -454,7 +454,7 @@ print("   debido a que el 93% de los usuarios no proporcionaron esta informació
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/e6674912e810da056960a8dcb1479fc6f163ee85.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/e6674912e810da056960a8dcb1479fc6f163ee85.png)
 :::
 
 ::: {.output .stream .stdout}
@@ -561,7 +561,7 @@ plt.show()
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/17bf814ab398f4aaf5695f3d74c328e7d6805378.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/17bf814ab398f4aaf5695f3d74c328e7d6805378.png)
 :::
 :::
 
@@ -603,7 +603,34 @@ plt.show()
 ```
 
 ::: {.output .display_data}
-![](vertopal_1a7e0a07a2a8494db33e0735352a65bd/f7cbe1343c0e836cd41a70f0be2541e83c5f8c60.png)
+![](vertopal_14d689f6814c4519ba3c7ab29e27ed07/f7cbe1343c0e836cd41a70f0be2541e83c5f8c60.png)
 :::
 :::
 
+::: {#4411374c .cell .markdown}
+# Conclusiones
+
+No he tenido principales hipótesis al empezar la tarea. He entrado en un
+rabbit hole investigando cada variable de cada dataset, pero sin ver el
+problema desde otra perspectiva y sin fijarme objetivos.
+
+En cambio, investigando he sacando algunas conclusiones:
+
+1.  Hay 640 items comprados de los que no tenemos información en el
+    inventario
+2.  El 21 de Enero de 2022 hay un pico en el número de pedidos
+3.  El 6 de Enero de 2022 hay un outlier en número de items en un pedido
+4.  El 93.5% no tiene información demográfica
+
+Vista la solución de Guille, me he dado cuenta que es muy importante
+analizar el problema de forma crítica y con una visión más enfocada en
+el negocio. Es decir, dejar a un lado el código y ponerse el la piel de
+un CEO:
+
+-   ¿Quien me compra?
+-   ¿Qué productos quieren los clientes?
+-   ¿Cuál es el patron de compra?
+
+Veo que este paso me ha costado, y me he quedado en un muy simple
+analisis sin conclusiones importantes.
+:::
