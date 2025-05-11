@@ -162,3 +162,6 @@ cython_debug/
 # añadir a gitignore src/module_2/box_builder_data/ y src/module_2/groceries_data/
 src/module_2/box_builder_data/
 src/module_2/groceries_data/
+
+# Ignore all .csv files
+*.csv
