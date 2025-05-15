@@ -166,5 +166,5 @@ src/module_2/groceries_data/
 # Ignore all .csv files
 *.csv
 
-# Ingore all inside src/module_3/models folder
-src/module_3/models/*
+# Ingore src/module_3/models folder
+/src/module_3/models/
