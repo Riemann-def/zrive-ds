@@ -38,7 +38,7 @@ def preprocess_data(df):
     return df
 
 
-def predict(data:pd.DataFrame, threshold:float=None)-> tuple:
+def predict(data: pd.DataFrame, threshold: float = None) -> tuple:
     model, default_threshold = load_model()
 
     if threshold is None:
@@ -53,8 +53,7 @@ def predict(data:pd.DataFrame, threshold:float=None)-> tuple:
     return predictions, probabilities
 
 
-def predict_from_file(filepath: str, output_path: str = None
-                      ) -> pd.DataFrame:
+def predict_from_file(filepath: str, output_path: str = None) -> pd.DataFrame:
     logger.info(f"Loading data from {filepath}")
 
     try:
