@@ -1,0 +1,40 @@
+{
+  "performance": {
+    "test": {
+      "precision": 0.26632124352331604,
+      "recall": 0.08043818466353678,
+      "f0.3_score": 0.22364775857251207
+    },
+    "validation": {
+      "precision": 0.30584795321637426,
+      "recall": 0.08201348596518739,
+      "f0.3_score": 0.24960046913853634
+    },
+    "threshold": 0.6108385857461833
+  },
+  "model_info": {
+    "name": "target_encoding_custom_weight",
+    "pipeline_steps": "['preprocessor', 'classifier']"
+  },
+  "parameters": {
+    "random_state": 55,
+    "class_weight": "{0: 1, 1: 5}",
+    "f_beta": 0.3
+  },
+  "comparison_results": [
+    {
+      "name": "target_encoding_custom_weight",
+      "f_beta": 0.24960046913853634,
+      "precision": 0.30584795321637426,
+      "recall": 0.08201348596518739,
+      "threshold": 0.6108385857461833
+    },
+    {
+      "name": "frequency_encoding_balanced",
+      "f_beta": 0.24157634082426488,
+      "precision": 0.28444444444444444,
+      "recall": 0.09032460404578956,
+      "threshold": 0.9681166545088838
+    }
+  ]
+}

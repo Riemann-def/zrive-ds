@@ -1,83 +1,99 @@
-import joblib
 import pandas as pd
-import numpy as np
+import joblib
 from .config import Config
 
 logger = Config.setLogger("predict_logger")
 
 
 def load_model():
-    logger.info(f"Loading model from {Config.MODEL_FILE}")
-    model = joblib.load(Config.MODEL_FILE)
+    try:
+        model_path, threshold_path = Config.get_active_model_paths()
 
-    with open(Config.THRESHOLD_FILE, "r") as f:
-        threshold = float(f.read().strip())
+        logger.info(f"Loading active model from {model_path}")
+        model = joblib.load(model_path)
 
-    return model, threshold
+        with open(threshold_path, "r") as f:
+            threshold = float(f.read().strip())
+
+        return model, threshold
+
+    except FileNotFoundError as e:
+        logger.error(f"Model loading failed: {str(e)}")
+        raise
 
 
-def preprocess_new_data(df: pd.DataFrame) -> pd.DataFrame:
-    # Drop unnecessary columns and ensure order_id is removed for prediction
+def preprocess_data(df):
     cols_to_drop = Config.COLS_TO_DROP.copy()
-    if Config.ORDER_ID_COL in df.columns:
-        if Config.ORDER_ID_COL not in cols_to_drop:
-            cols_to_drop.append(Config.ORDER_ID_COL)
 
-    # Ensure the target column is not in the input
-    if Config.TARGET_COL in df.columns:
-        if Config.TARGET_COL not in cols_to_drop:
-            cols_to_drop.append(Config.TARGET_COL)
+    if Config.ORDER_ID_COL in df.columns and Config.ORDER_ID_COL not in cols_to_drop:
+        cols_to_drop.append(Config.ORDER_ID_COL)
 
-    # Return only needed columns
-    available_cols = [col for col in df.columns if col not in cols_to_drop]
-    return df[available_cols]
+    if Config.TARGET_COL in df.columns and Config.TARGET_COL not in cols_to_drop:
+        cols_to_drop.append(Config.TARGET_COL)
+
+    drop_cols = [col for col in cols_to_drop if col in df.columns]
+    if drop_cols:
+        df = df.drop(columns=drop_cols)
+
+    return df
 
 
-def predict(model, df: pd.DataFrame, threshold: float = 0.5) -> np.ndarray:
-    # Get probability predictions
-    probabilities = model.predict_proba(df)[:, 1]
+def predict(data:pd.DataFrame, threshold:float=None)-> tuple:
+    model, default_threshold = load_model()
 
-    # Apply threshold
+    if threshold is None:
+        threshold = default_threshold
+
+    X = preprocess_data(data)
+
+    probabilities = model.predict_proba(X)[:, 1]
+
     predictions = (probabilities >= threshold).astype(int)
 
     return predictions, probabilities
 
 
-def predict_from_file(filepath: str) -> pd.DataFrame:
-    # Load model and threshold
-    model, threshold = load_model()
+def predict_from_file(filepath: str, output_path: str = None
+                      ) -> pd.DataFrame:
+    logger.info(f"Loading data from {filepath}")
 
-    # Load and preprocess data
-    df = pd.read_csv(filepath)
-    X = preprocess_new_data(df)
+    try:
+        df = pd.read_csv(filepath)
+    except Exception as e:
+        logger.error(f"Error loading data: {str(e)}")
+        raise
 
-    # Get predictions
-    predictions, probabilities = predict(model, X, threshold)
+    predictions, probabilities = predict(df)
 
-    # Add predictions to the original dataframe
-    results_df = df.copy()
-    results_df["prediction"] = predictions
-    results_df["probability"] = probabilities
+    results = df.copy()
+    results["purchase_probability"] = probabilities
+    results["predicted_purchase"] = predictions
 
-    logger.info(f"Made predictions for {len(df)} samples")
+    logger.info(f"Made predictions for {len(df)} rows")
     logger.info(
         f"Predicted purchases: {predictions.sum()} ({predictions.mean()*100:.2f}%)"
     )
 
-    return results_df
+    if output_path:
+        results.to_csv(output_path, index=False)
+        logger.info(f"Results saved to {output_path}")
+
+    return results
 
 
 if __name__ == "__main__":
     import sys
 
     if len(sys.argv) > 1:
-        filepath = sys.argv[1]
+        input_file = sys.argv[1]
+        output_file = input_file.replace(".csv", "_predictions.csv")
+
+        try:
+            predict_from_file(input_file, output_file)
+        except Exception as e:
+            logger.error(f"Prediction failed: {str(e)}")
+            sys.exit(1)
     else:
-        filepath = Config.LOCAL_DATA_PATH
-
-    results = predict_from_file(filepath)
-
-    # If needed, save results
-    output_path = filepath.replace(".csv", "_predictions.csv")
-    results.to_csv(output_path, index=False)
-    logger.info(f"Results saved to {output_path}")
+        logger.error("No input file specified")
+        print("Usage: python -m src.module_3.predict path/to/input.csv")
+        sys.exit(1)
