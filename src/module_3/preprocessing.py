@@ -53,6 +53,35 @@ class DateFeatureTransformer(BaseEstimator, TransformerMixin):
         return X_transformed
 
 
+class FrequencyEncoder(BaseEstimator, TransformerMixin):
+    def __init__(self, categorical_columns):
+        self.categorical_columns = categorical_columns
+        self.frequency_maps = {}
+
+    def fit(self, X, y=None):
+        for column in self.categorical_columns:
+            if column in X.columns:
+                frequencies = X[column].value_counts(normalize=True).to_dict()
+                self.frequency_maps[column] = frequencies
+        return self
+
+    def transform(self, X):
+        X_copy = X.copy()
+
+        for column in self.categorical_columns:
+            if column in X_copy.columns:
+                default_value = (
+                    min(self.frequency_maps[column].values())
+                    if self.frequency_maps[column]
+                    else 0
+                )
+                X_copy[column] = X_copy[column].map(
+                    lambda x: self.frequency_maps[column].get(x, default_value)
+                )
+
+        return X_copy
+
+
 class TargetEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, categorical_columns, target_column="outcome", smoothing=1.0):
         self.categorical_columns = categorical_columns
