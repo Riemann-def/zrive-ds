@@ -44,6 +44,6 @@ MODEL_PARAMS = {
     "random_state": 55,
 }
 
-THRESHOLD = 0.41  # F0.3 optimum
+THRESHOLD = 0.3039
 
 TODAY_STR = date.today().strftime("%Y_%m_%d")
