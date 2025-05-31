@@ -168,3 +168,6 @@ src/module_2/groceries_data/
 
 # Ignore any models folder
 models/
+
+# Ignore all .feather files
+*.feather
