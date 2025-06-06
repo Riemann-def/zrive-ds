@@ -171,3 +171,6 @@ models/
 
 # Ignore all .feather files
 *.feather
+
+# Assets folder - images for notebooks
+assets/
