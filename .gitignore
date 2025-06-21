@@ -174,3 +174,6 @@ models/
 
 # Assets folder - images for notebooks
 assets/
+
+# Ignore all /logs folders
+logs/
