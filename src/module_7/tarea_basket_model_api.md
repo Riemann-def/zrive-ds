@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
 En línea de comandos, podemos levantar la API con la siguiente línea:
 ```
-poetry run python src/module_6/app.py
+poetry run python src/module_7/app.py
 ```
 
 Finalmente, podemos hacer una petición a la API:
