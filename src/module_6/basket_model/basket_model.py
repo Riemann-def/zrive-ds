@@ -15,7 +15,8 @@ class BasketModel:
 
     def predict(self, features: np.ndarray) -> np.ndarray:
         try:
+            print(f"Predicting with features.shape {features.shape}: {features}")
             pred = self.model.predict(features)
-        except Exception as exception:
-            raise PredictionException("Error during model inference") from exception
+        except Exception as e:
+            raise PredictionException(f"Error during model inference: {str(e)}")
         return pred

@@ -1,6 +1,7 @@
 # config.py
 import os
 from pathlib import Path
+from constants import DataFiles
 
 class Config:
     MODULE_6_DIR = Path(__file__).parent
@@ -11,7 +12,7 @@ class Config:
     
     DATA_DIR = MODULE_6_DIR / "data"
     BIN_DIR = MODULE_6_DIR / "bin"
-    MODEL_PATH = BIN_DIR / "model.joblib"
+    MODEL_PATH = BIN_DIR / DataFiles.MODEL
     
     API_HOST = "0.0.0.0"
     API_PORT = 8000
