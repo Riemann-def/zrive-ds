@@ -20,6 +20,12 @@ class FeatureStore:
     def get_features(self, user_id: str) -> pd.Series:
         try:
             features = self.feature_store.loc[user_id]
+        except KeyError:
+            raise UserNotFoundException(
+                f"User ID '{user_id}' not found in feature store."
+            )
         except Exception as e:
-            raise UserNotFoundException(f"User not found in feature store: {str(e)}")
+            raise UserNotFoundException(
+                f"Error retrieving features for user {user_id}: {str(e)}"
+            )
         return features

@@ -13,11 +13,8 @@ class TestEndpoints:
         from src.module_7.app import app
 
         client = TestClient(app)
-
-        # Act
         response = client.get("/status")
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "OK"
@@ -30,13 +27,9 @@ class TestEndpoints:
 
         client = TestClient(app)
 
-        # Arrange
         mock_prediction_service.predict.return_value = 75.42
-
-        # Act
         response = client.post("/predict", json={"user_id": "test_user_123"})
 
-        # Assert
         assert response.status_code == 200
         data = response.json()
         assert data["user_id"] == "test_user_123"
@@ -49,11 +42,8 @@ class TestEndpoints:
         from src.module_7.app import app
 
         client = TestClient(app)
-
-        # Act
         response = client.post("/predict", json={})
 
-        # Assert
         assert response.status_code == 422  # Pydantic validation error
         data = response.json()
         assert "detail" in data
@@ -63,32 +53,36 @@ class TestEndpoints:
         from src.module_7.app import app
 
         client = TestClient(app)
-
-        # Act
         response = client.post("/predict", json={"user_id": ""})
 
-        # Assert
         assert response.status_code == 400
         data = response.json()
         assert "Invalid user ID" in data["detail"]
 
     def test_predict_user_not_found(self):
         """Test POST /predict when user doesn't exist"""
-        # Mock antes de importar
-        with patch("services.prediction_service.PredictionService") as MockService:
-            # Setup mock para lanzar excepción
-            mock_instance = Mock()
-            mock_instance.predict.side_effect = UserNotFoundException("User not found")
-            MockService.return_value = mock_instance
+        with patch("basket_model.basket_model.BasketModel") as MockBasketModel, patch(
+            "basket_model.feature_store.FeatureStore"
+        ) as MockFeatureStore, patch(
+            "services.prediction_service.PredictionService"
+        ) as MockPredictionService:
+            mock_basket_instance = Mock()
+            MockBasketModel.return_value = mock_basket_instance
+
+            mock_feature_instance = Mock()
+            MockFeatureStore.return_value = mock_feature_instance
+
+            mock_prediction_instance = Mock()
+            mock_prediction_instance.predict.side_effect = UserNotFoundException(
+                "User not found"
+            )
+            MockPredictionService.return_value = mock_prediction_instance
 
             from src.module_7.app import app
 
             client = TestClient(app)
-
-            # Act
             response = client.post("/predict", json={"user_id": "nonexistent_user"})
 
-            # Assert
             assert response.status_code == 404
             data = response.json()
             assert "User not found" in data["detail"]
