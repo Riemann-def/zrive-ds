@@ -6,7 +6,12 @@ import time
 
 from models.request import PredictRequest
 from models.response import PredictResponse, StatusResponse
-from exceptions.custom_exceptions import *
+from exceptions.custom_exceptions import (
+    InvalidRequestException,
+    ServiceUnavailableException,
+    UserNotFoundException,
+    PredictionException,
+)
 from services.prediction_service import PredictionService
 from logger import ServiceLogger, ModelLogger
 from config import Config
@@ -25,6 +30,7 @@ except Exception as e:
     service_logger.log_error(f"Failed to initialize API: {str(e)}")
     raise ServiceUnavailableException("Service initialization failed")
 
+
 @app.get("/status", response_model=StatusResponse)
 def get_status():
     start_time = time.time()
@@ -39,10 +45,11 @@ def get_status():
         service_logger.log_error(f"Status endpoint error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.post("/predict", response_model=PredictResponse)
 def predict(request: PredictRequest):
     start_time = time.time()
-    
+
     try:
         if not request.user_id or not isinstance(request.user_id, str):
             raise InvalidRequestException("Invalid user ID")
@@ -52,37 +59,38 @@ def predict(request: PredictRequest):
         response = PredictResponse(
             user_id=request.user_id,
             predicted_price=prediction,
-            timestamp=datetime.now()
+            timestamp=datetime.now(),
         )
-        
+
         latency = time.time() - start_time
         service_logger.log_request("POST", "/predict", latency, "200")
-        
+
         return response
-        
+
     except InvalidRequestException as e:
         latency = time.time() - start_time
         service_logger.log_request("POST", "/predict", latency, "400")
         service_logger.log_error(f"Invalid request: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
-        
+
     except UserNotFoundException as e:
         latency = time.time() - start_time
         service_logger.log_request("POST", "/predict", latency, "404")
         service_logger.log_error(f"User not found: {str(e)}")
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     except PredictionException as e:
         latency = time.time() - start_time
         service_logger.log_request("POST", "/predict", latency, "500")
         service_logger.log_error(f"Prediction error: {str(e)}")
         raise HTTPException(status_code=500, detail="Prediction service error")
-    
+
     except Exception as e:
         latency = time.time() - start_time
         service_logger.log_request("POST", "/predict", latency, "500")
         service_logger.log_error(f"Internal server error: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host=Config.API_HOST, port=Config.API_PORT)

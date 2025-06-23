@@ -3,9 +3,7 @@ import pandas as pd
 from constants import Columns, CalculatedColumns
 
 
-def count_regulars_in_order(
-        order: pd.DataFrame, user_regulars: pd.DataFrame
-    ) -> int:
+def count_regulars_in_order(order: pd.DataFrame, user_regulars: pd.DataFrame) -> int:
     try:
         return len(
             set(order[Columns.Orders.ITEM_IDS]).intersection(
@@ -23,18 +21,15 @@ def count_regulars_in_orders(
         counts = []
         for _, order in orders.iterrows():
             user_regulars = regulars.loc[
-                lambda x: (
-                    x[Columns.Regulars.USER_ID] == order[Columns.Orders.USER_ID]
-                )
+                lambda x: (x[Columns.Regulars.USER_ID] == order[Columns.Orders.USER_ID])
             ]
             counts += [count_regulars_in_order(order, user_regulars)]
         return np.array(counts)
     except Exception as e:
         raise Exception(f"Error counting regulars in orders: {str(e)}")
 
-def compute_basket_value(
-        orders: pd.DataFrame, mean_item_price: float
-    ) -> pd.Series:
+
+def compute_basket_value(orders: pd.DataFrame, mean_item_price: float) -> pd.Series:
     try:
         return orders[CalculatedColumns.ITEM_COUNT] * mean_item_price
     except Exception as e:
@@ -56,22 +51,23 @@ def enrich_orders(
 
     except Exception as e:
         raise Exception(f"Error enriching orders: {str(e)}")
-    
+
+
 def build_prior_orders(enriched_orders: pd.DataFrame) -> pd.DataFrame:
     try:
         prior_orders = enriched_orders.copy()
         prior_orders[CalculatedColumns.USER_ORDER_SEQ_PLUS_1] = (
             prior_orders[CalculatedColumns.USER_ORDER_SEQ] + 1
         )
-        prior_orders[CalculatedColumns.PRIOR_BASKET_VALUE] = (
-            prior_orders[CalculatedColumns.BASKET_VALUE]
-        )
-        prior_orders[CalculatedColumns.PRIOR_ITEM_COUNT] = (
-            prior_orders[CalculatedColumns.ITEM_COUNT]
-        )
-        prior_orders[CalculatedColumns.PRIOR_REGULARS_COUNT] = (
-            prior_orders[CalculatedColumns.REGULARS_COUNT]
-        )
+        prior_orders[CalculatedColumns.PRIOR_BASKET_VALUE] = prior_orders[
+            CalculatedColumns.BASKET_VALUE
+        ]
+        prior_orders[CalculatedColumns.PRIOR_ITEM_COUNT] = prior_orders[
+            CalculatedColumns.ITEM_COUNT
+        ]
+        prior_orders[CalculatedColumns.PRIOR_REGULARS_COUNT] = prior_orders[
+            CalculatedColumns.REGULARS_COUNT
+        ]
         return prior_orders.loc[
             :,
             [
@@ -105,17 +101,11 @@ def build_feature_frame(
             ],
             prior_orders,
             how="inner",
-            left_on=(
-                Columns.Orders.USER_ID, CalculatedColumns.USER_ORDER_SEQ
-            ),
-            right_on=(
-                Columns.Orders.USER_ID, CalculatedColumns.USER_ORDER_SEQ_PLUS_1
-            ),
+            left_on=(Columns.Orders.USER_ID, CalculatedColumns.USER_ORDER_SEQ),
+            right_on=(Columns.Orders.USER_ID, CalculatedColumns.USER_ORDER_SEQ_PLUS_1),
         ).drop(
-            [
-                CalculatedColumns.USER_ORDER_SEQ,
-                CalculatedColumns.USER_ORDER_SEQ_PLUS_1
-            ], axis=1
+            [CalculatedColumns.USER_ORDER_SEQ, CalculatedColumns.USER_ORDER_SEQ_PLUS_1],
+            axis=1,
         )
     except Exception as e:
         raise Exception(f"Error building feature frame: {str(e)}")

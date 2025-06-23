@@ -1,7 +1,5 @@
-import os
 import joblib
 import numpy as np
-from pathlib import Path
 from exceptions.custom_exceptions import PredictionException
 from config import Config
 
