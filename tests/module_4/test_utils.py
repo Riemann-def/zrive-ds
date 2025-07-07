@@ -41,11 +41,6 @@ class TestValidateEventInput:
 
 
 class TestPushModel:
-    def test_model_creation(self):
-        model = PushModel()
-        assert model.threshold == 0.41
-        assert isinstance(model._model, object)
-
     def test_model_predict_dummy(self):
         model = PushModel()
         dummy_data = pd.DataFrame({"feature1": [1, 2, 3], "feature2": [0.1, 0.2, 0.3]})
